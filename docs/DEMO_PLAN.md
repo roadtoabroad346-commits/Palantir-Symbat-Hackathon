@@ -17,3 +17,7 @@ The hub is one entry page. App frames still use local ports3001–3006; it is no
 - Initial browser regression found Next16blocking iframe dev resources. Installed official allowedDevOrigins documentation was read; only localhost and127.0.0.1 were added in six configs. Restarted developer services then passed actual client interactivity checks.
 - Desktop shortcuts are supplied for Windows/macOS. Windows execution was not tested on this Linux host; pnpm demo and the actual browser flow were exercised here.
 - Source-only archive includes tracked project files,not node_modules,build caches,SQLite demo state,Git metadata or local secrets. First install needs package registry access.
+
+## Windows launcher correction
+
+A user screenshot exposed cmd.exe treating fragments of the UTF-8/LF batch file as commands. A new byte-format regression test failed on the old artifact and passes with an ASCII, BOM-free, CRLF launcher. `.gitattributes` preserves CRLF on checkout. The launcher disables delayed expansion, validates the project folder, uses `call` for pnpm and preserves exit status before pause. Both full and launcher-only ZIP contents are byte-verified. No Windows runtime is available in this Linux environment; actual Windows execution remains unverified.
