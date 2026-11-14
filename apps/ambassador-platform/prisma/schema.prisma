@@ -1,0 +1,76 @@
+generator client {
+ provider = "prisma-client-js"
+ engineType = "client"
+ output = "../generated/client"
+}
+datasource db {
+ provider = "sqlite"
+ url = "file:./demo.db"
+}
+model Ambassador {
+ id String @id
+ nickname String
+ country String
+ city String
+ age18Confirmed Boolean
+ level String @default("Bronze")
+ createdAt DateTime @default(now())
+}
+model PointsLedger {
+ id String @id
+ ambassadorId String
+ delta Int
+ reason String
+ refType String
+ refId String @unique
+ ts DateTime @default(now())
+}
+model ReferralLink {
+ id String @id
+ ambassadorId String
+ code String @unique
+}
+model Task {
+ id String @id
+ title String
+ type String
+ points Int
+ description String
+ proofType String
+}
+model Submission {
+ id String @id
+ taskId String
+ ambassadorId String
+ proof String
+ status String @default("pending")
+ reviewedBy String?
+ ts DateTime @default(now())
+}
+model Reward {
+ id String @id
+ title String
+ costPoints Int
+ stock Int
+}
+model Redemption {
+ id String @id
+ rewardId String
+ ambassadorId String
+ status String @default("requested")
+}
+model FraudFlag {
+ id String @id
+ ambassadorId String
+ reason String
+ resolved Boolean @default(false)
+ ts DateTime @default(now())
+}
+model ReferralEvent {
+ id String @id
+ ambassadorId String
+ studentRef String @unique
+ nickname String
+ type String
+ ts DateTime @default(now())
+}

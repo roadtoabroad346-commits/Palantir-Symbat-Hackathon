@@ -8,3 +8,4 @@
 - Challenge progress and judge results normalize to 0–100 before weights. Closed challenges retain frozen JSON rankings. Seasons retain immutable snapshots.
 - Demo referral URLs resolve locally through /r/[code]; real links, sending, certificates and upstream platform are simulated.
 - Prisma uses engineType=client and the official libSQL adapter for local SQLite. prisma.config.ts selects the JS schema engine. This avoids binary engine downloads blocked by the cloud allowlist; TLS and checksum verification remain enabled. Node 24 is the development baseline.
+- Local SQL migrations are checked in per app and applied transactionally by Node's SQLite module. Prisma's JS schema engine stays configured for client generation; normal app runtime uses the official Prisma/libSQL adapter. Do not run db push against the migration-managed files.

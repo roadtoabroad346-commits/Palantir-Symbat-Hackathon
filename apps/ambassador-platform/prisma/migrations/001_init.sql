@@ -1,0 +1,67 @@
+CREATE TABLE "Ambassador" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "nickname" TEXT NOT NULL,
+  "country" TEXT NOT NULL,
+  "city" TEXT NOT NULL,
+  "age18Confirmed" BOOLEAN NOT NULL,
+  "level" TEXT NOT NULL DEFAULT "Bronze",
+  "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE "PointsLedger" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "ambassadorId" TEXT NOT NULL,
+  "delta" INTEGER NOT NULL,
+  "reason" TEXT NOT NULL,
+  "refType" TEXT NOT NULL,
+  "refId" TEXT NOT NULL UNIQUE,
+  "ts" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE "ReferralLink" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "ambassadorId" TEXT NOT NULL,
+  "code" TEXT NOT NULL UNIQUE
+);
+CREATE TABLE "Task" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "title" TEXT NOT NULL,
+  "type" TEXT NOT NULL,
+  "points" INTEGER NOT NULL,
+  "description" TEXT NOT NULL,
+  "proofType" TEXT NOT NULL
+);
+CREATE TABLE "Submission" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "taskId" TEXT NOT NULL,
+  "ambassadorId" TEXT NOT NULL,
+  "proof" TEXT NOT NULL,
+  "status" TEXT NOT NULL DEFAULT "pending",
+  "reviewedBy" TEXT,
+  "ts" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE "Reward" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "title" TEXT NOT NULL,
+  "costPoints" INTEGER NOT NULL,
+  "stock" INTEGER NOT NULL
+);
+CREATE TABLE "Redemption" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "rewardId" TEXT NOT NULL,
+  "ambassadorId" TEXT NOT NULL,
+  "status" TEXT NOT NULL DEFAULT "requested"
+);
+CREATE TABLE "FraudFlag" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "ambassadorId" TEXT NOT NULL,
+  "reason" TEXT NOT NULL,
+  "resolved" BOOLEAN NOT NULL DEFAULT 0,
+  "ts" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE "ReferralEvent" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "ambassadorId" TEXT NOT NULL,
+  "studentRef" TEXT NOT NULL UNIQUE,
+  "nickname" TEXT NOT NULL,
+  "type" TEXT NOT NULL,
+  "ts" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

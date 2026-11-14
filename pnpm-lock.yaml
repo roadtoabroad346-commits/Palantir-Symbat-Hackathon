@@ -33,6 +33,37 @@ importers:
         specifier: ^3.2.4
         version: 3.2.7(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(supports-color@7.2.0)(tsx@4.23.15)
 
+  apps/ambassador-platform:
+    dependencies:
+      '@prisma/adapter-libsql':
+        specifier: 6.19.3
+        version: 6.19.3
+      '@prisma/client':
+        specifier: 6.19.3
+        version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
+      '@startify/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      next:
+        specifier: 16.4.6
+        version: 16.4.6(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      react:
+        specifier: ^19.2.0
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.3.1(react@19.3.1)
+    devDependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.1.0
+        version: 4.3.5
+      prisma:
+        specifier: 6.19.3
+        version: 6.19.3(typescript@5.9.3)
+      tailwindcss:
+        specifier: ^4.1.0
+        version: 4.3.5
+
   apps/growth-engine:
     dependencies:
       '@prisma/adapter-libsql':
