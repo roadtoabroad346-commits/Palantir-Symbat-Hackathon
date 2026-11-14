@@ -1,5 +1,6 @@
 import { MockAiStartifyClient, type AiStartifyClient } from "./index";
 import { seedApp } from "./server/seeds";
+import { rmSync } from "node:fs";
 import { names, menus, roleMap } from "./server/config";
 import { uid, add, get } from "./server/common";
 import type { Database, Row, View } from "./server/types";
@@ -9,6 +10,22 @@ import { createAmbassador } from "./server/ambassador";
 import { createChallenge } from "./server/challenge";
 import { createPortal } from "./server/portal";
 import { createLeague } from "./server/league";
+/** Retry temp-directory cleanup: Windows briefly keeps libSQL file handles open after $disconnect. */
+export async function removeDirectory(directory: string): Promise<void> {
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    try {
+      rmSync(directory, { recursive: true, force: true });
+      return;
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException)?.code;
+      if (attempt === 5 || (code !== "EPERM" && code !== "EBUSY" && code !== "ENOTEMPTY")) {
+        console.warn(`Temp cleanup skipped for ${directory}: ${code}`);
+        return;
+      }
+      await new Promise((resolve) => setTimeout(resolve, attempt * 50));
+    }
+  }
+}
 /** Bind one independent application's database to its demo workflows. */
 export function makeService(app: string, db: Database) {
   const roles = roleMap[app];

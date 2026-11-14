@@ -1,11 +1,11 @@
-import {mkdtempSync,readFileSync,rmSync} from 'node:fs';
+import {mkdtempSync,readFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {DatabaseSync} from 'node:sqlite';
 import {beforeAll,afterAll,expect,it} from 'vitest';
 import {PrismaLibSQL} from '@prisma/adapter-libsql';
 import {PrismaClient} from './generated/client';
-import {makeService,type Database} from '@startify/shared/server';
+import {makeService,removeDirectory,type Database} from '@startify/shared/server';
 
 const directory=mkdtempSync(join(tmpdir(),'startify-workflow-'));
 const file=join(directory,'demo.db');
@@ -15,7 +15,7 @@ sqlite.close();
 const db=new PrismaClient({adapter:new PrismaLibSQL({url:'file:'+file})});
 const service=makeService('ambassador-platform',db as unknown as Database);
 beforeAll(async()=>{await service.seed();await service.seed();},30000);
-afterAll(async()=>{await db.$disconnect();rmSync(directory,{recursive:true,force:true});});
+afterAll(async()=>{await db.$disconnect();await removeDirectory(directory);});
 
 it('shows all ambassador routes, gated admin and leaderboard order',async()=>{
   expect(await db.ambassador.count()).toBe(20);

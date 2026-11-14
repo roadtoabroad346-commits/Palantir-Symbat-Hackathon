@@ -1,10 +1,11 @@
-import { afterAll, it, expect } from "vitest";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { PrismaClient } from "../generated/client";
+import { afterAll, it, expect } from "vitest";
 import { PrismaLibSQL } from "@prisma/adapter-libsql";
+import { removeDirectory } from "@startify/shared/server";
+import { PrismaClient } from "../generated/client";
 import { MockDataSource, HttpDataSource, seedDatabase } from "./datasource";
 import type { FeedbackInput } from "./types";
 const dir = mkdtempSync(join(tmpdir(), "globe-database-"));
@@ -20,7 +21,7 @@ const db = new PrismaClient({
 const source = new MockDataSource(db);
 afterAll(async () => {
   await db.$disconnect();
-  rmSync(dir, { recursive: true, force: true });
+  await removeDirectory(dir);
 });
 it("persists seed idempotently and simulates only active countries while preserving sums", async () => {
   await seedDatabase(db);
