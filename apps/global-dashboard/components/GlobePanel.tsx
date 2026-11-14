@@ -242,7 +242,7 @@ export function GlobePanel({ model }: { model: DashboardModel }) {
               key={d.key}
               onClick={() => toggleDirection(d.key)}
               aria-pressed={visible.includes(d.key)}
-              className={!visible.includes(d.key) ? "muted" : ""}
+              className={`${!visible.includes(d.key) ? "muted" : ""} ${mode === "single" && single === d.key ? "current-direction" : ""}`}
             >
               <span
                 className={`mini-marker ${d.shape}`}

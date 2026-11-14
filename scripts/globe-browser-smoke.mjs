@@ -295,7 +295,11 @@ try {
       `wave markers month${month}`,
     );
   }
-  await waitFor(()=>page.evaluate("!!document.querySelector('button[data-country=\"IN\"]')"),'India marker ready after layer update');
+  await waitFor(
+    () =>
+      page.evaluate("!!document.querySelector('button[data-country=\"IN\"]')"),
+    "India marker ready after layer update",
+  );
   await page.evaluate(
     "document.querySelector('button[data-country=\"IN\"]').click()",
   );
@@ -479,7 +483,12 @@ try {
   );
   const reduced = await newPage();
   await reduced.send("Page.bringToFront");
-  await reduced.send("Emulation.setDeviceMetricsOverride",{width:1440,height:1100,deviceScaleFactor:1,mobile:false});
+  await reduced.send("Emulation.setDeviceMetricsOverride", {
+    width: 1440,
+    height: 1100,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
   await reduced.send("Emulation.setEmulatedMedia", {
     features: [{ name: "prefers-reduced-motion", value: "reduce" }],
   });
@@ -489,8 +498,16 @@ try {
       reduced.evaluate("!!document.querySelector('.globe-viewport canvas')"),
     "reduced-motion WebGL",
   );
-  await reduced.evaluate("document.querySelector('.globe-viewport').scrollIntoView({block:'center'})");
-  await waitFor(()=>reduced.evaluate("document.querySelectorAll('.globe-direction-marker').length===15"),'Reduced-motion initial marker layer ready');
+  await reduced.evaluate(
+    "document.querySelector('.globe-viewport').scrollIntoView({block:'center'})",
+  );
+  await waitFor(
+    () =>
+      reduced.evaluate(
+        "document.querySelectorAll('.globe-direction-marker').length===15",
+      ),
+    "Reduced-motion initial marker layer ready",
+  );
   await delay(6300);
   assert.equal(
     await reduced.evaluate("document.querySelectorAll('.globe-remark').length"),

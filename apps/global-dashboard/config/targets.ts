@@ -1,96 +1,72 @@
+import { countries as sharedCountries } from "@startify/shared";
 import type { Country, DirectionKey } from "../lib/types";
-export const COUNTRIES: Country[] = [
+const geography = [
   {
     iso: "KZ",
-    nameRu: "Казахстан",
-    nameEn: "Kazakhstan",
     lat: 48.02,
     lng: 66.92,
-    wave: 1,
     primaryLang: "kk",
   },
   {
     iso: "UZ",
-    nameRu: "Узбекистан",
-    nameEn: "Uzbekistan",
     lat: 41.38,
     lng: 64.58,
-    wave: 1,
     primaryLang: "uz",
   },
   {
     iso: "KG",
-    nameRu: "Кыргызстан",
-    nameEn: "Kyrgyzstan",
     lat: 41.2,
     lng: 74.77,
-    wave: 1,
     primaryLang: "ky",
   },
   {
     iso: "IN",
-    nameRu: "Индия",
-    nameEn: "India",
     lat: 22.59,
     lng: 78.96,
-    wave: 2,
     primaryLang: "hi",
   },
   {
     iso: "NG",
-    nameRu: "Нигерия",
-    nameEn: "Nigeria",
     lat: 9.08,
     lng: 8.68,
-    wave: 2,
     primaryLang: "en",
   },
   {
     iso: "PH",
-    nameRu: "Филиппины",
-    nameEn: "Philippines",
     lat: 12.88,
     lng: 121.77,
-    wave: 2,
     primaryLang: "tl",
   },
   {
     iso: "KE",
-    nameRu: "Кения",
-    nameEn: "Kenya",
     lat: 0.02,
     lng: 37.91,
-    wave: 2,
     primaryLang: "sw",
   },
   {
     iso: "TR",
-    nameRu: "Турция",
-    nameEn: "Turkey",
     lat: 38.96,
     lng: 35.24,
-    wave: 3,
     primaryLang: "tr",
   },
   {
     iso: "VN",
-    nameRu: "Вьетнам",
-    nameEn: "Vietnam",
     lat: 14.05,
     lng: 108.27,
-    wave: 3,
     primaryLang: "vi",
   },
   {
     iso: "ID",
-    nameRu: "Индонезия",
-    nameEn: "Indonesia",
     lat: -0.79,
     lng: 113.92,
-    wave: 3,
     primaryLang: "id",
   },
 ];
+export const COUNTRIES: Country[] = geography.map((c) => {
+  const shared = sharedCountries.find((country) => country.code === c.iso);
+  if (!shared) throw new Error(`Missing shared country ${c.iso}`);
+  return { ...c, nameRu: shared.ru, nameEn: shared.en, wave: shared.wave };
+});
 export const MARKET_WEIGHTS: Record<string, number> = {
   KZ: 1.2,
   UZ: 1.5,

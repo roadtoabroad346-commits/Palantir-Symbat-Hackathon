@@ -9,6 +9,10 @@ flowchart TD
   C[Challenges :3003] --> S
   P[Portal :3004] --> S
   L[League :3005] --> S
+  GD[Global Impact :3006] --> DS[DashboardDataSource]
+  DS --> GDDB[(Independent dashboard SQLite)]
+  DS --> GM[Shared mock platform adapter]
+  GD --> Atlas[Bundled world-atlas polygons]
   S --> D[Domain modules]
   D --> B[Pure business rules + PII guard]
   D --> I[AiStartifyClient]
@@ -25,3 +29,5 @@ Campaign events retain referral codes for attribution. Ambassador balance is onl
 Startup regenerates Prisma clients, applies local SQL migrations in a transaction and seeds empty databases. The official libSQL adapter and JS schema engine avoid downloading native Prisma engines. Runtime processes are not part of a reusable cloud snapshot; use the saved start instructions to relaunch them.
 
 Demo authentication is an app-specific HTTP-only SameSite=Strict role cookie. Roles are validated on mutations; same-origin POST checks compare Origin and Host. This is designed for local demonstrations, not public authentication. Public referral/event routes are simulated and need authenticated provenance for production.
+
+Global Impact has an independent DashboardDataSource and its own Prisma schema. It reuses shared countries, privacy and mock platform helpers. Local globe geometry ships in the client bundle; no remote basemap or texture service is involved. Its metrics are synthetic snapshots, not live aggregation from the other five apps.

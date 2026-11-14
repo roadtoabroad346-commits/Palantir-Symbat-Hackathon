@@ -46,7 +46,18 @@ export const countries = [
   ["VN", "Вьетнам", "Vietnam", "🇻🇳", "en"],
   ["ID", "Индонезия", "Indonesia", "🇮🇩", "en"],
   ["KE", "Кения", "Kenya", "🇰🇪", "en"],
-].map(([code, ru, en, flag, language]) => ({ code, ru, en, flag, language }));
+].map(([code, ru, en, flag, language]) => ({
+  code,
+  ru,
+  en,
+  flag,
+  language,
+  wave: ["KZ", "UZ", "KG"].includes(code)
+    ? 1
+    : ["IN", "NG", "PH", "KE"].includes(code)
+      ? 2
+      : 3,
+}));
 export const countryName = (code: string, lang: Language) => {
   const c = countries.find((c) => c.code === code);
   return c ? `${c.flag} ${c[lang]}` : code;

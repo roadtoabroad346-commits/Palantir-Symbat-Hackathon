@@ -1,6 +1,6 @@
 # AI Startify · Global growth lab
 
-Five independent bilingual MVPs for the AI Startify Global Growth Challenge. All screens visibly identify **demo data**. No application is connected to AI Startify, a real advertising system, a messaging service or a student database. No API keys are required.
+Six independent bilingual MVPs for the AI Startify Global Growth Challenge. All screens visibly identify **demo data**. No application is connected to AI Startify, a real advertising system, a messaging service or a student database. No API keys are required.
 
 ## Install and run
 
@@ -13,7 +13,8 @@ pnpm dev:ambassador   # 3002 — adult ambassadors, tasks and rewards
 pnpm dev:challenge    # 3003 — teams, judging and frozen results
 pnpm dev:portal       # 3004 — school clubs, lessons and reports
 pnpm dev:league       # 3005 — public league and founder cards
-# Or run all five:
+pnpm dev:globe        # 3006 — offline 3D global impact observatory
+# Or run all six:
 pnpm dev:all
 ```
 
@@ -36,10 +37,11 @@ Copy `.env.example` only if local overrides are needed. `LLM_PROVIDER=mock` is t
 pnpm db:prepare      # needed before tests/type checks in a clean checkout
 pnpm test
 pnpm test:coverage  # pure logic and server workflows; threshold >=80%
-pnpm build          # all five production builds, sequential to limit memory
-pnpm lint           # ESLint + all five strict TypeScript checks
+pnpm build          # all six production builds, sequential to limit memory
+pnpm lint           # ESLint + all six strict TypeScript checks
 pnpm smoke          # boots each production app, checks routes and functional APIs
-pnpm smoke:browser  # optional: Chromium on PATH or /usr/bin/chromium
+pnpm smoke:browser       # original campaign/PNG browser checks
+pnpm smoke:globe-browser # globe, feedback, offline and accessibility checks
 ```
 
 HTTP smoke checks routes, independent role cookies, actual simulation changes and CSV responses. The lightweight browser check uses native CDP, without an E2E framework: it submits a campaign form, verifies three generated variants, changes language/theme, checks a 390px viewport and downloads a PNG with a valid signature and 1200×760 dimensions. Browser tests require local Chromium; other workflows do not.
@@ -58,15 +60,19 @@ Unit and database integration suites cover public text validation, attribution, 
 
 `START-001` through `START-020` are demo school codes. Challenge seeds use eight of those schools. Portal classes use their own `CLUB-…` codes and remain inactive until consent. Each app is independent: registering a school in the portal does not register it in the other mock databases.
 
+## Global Impact dashboard
+
+The sixth app combines an offline 3D globe,13-month expansion timeline,five distinct direction layers,fictional community remarks,a sortable fallback table and presenter mode. Run `pnpm dev:globe` on3006. See the [dashboard README](apps/global-dashboard/README.md) for its60-second demo and [verification](docs/GLOBE_VERIFICATION.md) for current checks.
+
 ## Architecture
 
 ```mermaid
 flowchart LR
-  UI[Five Next.js App Router UIs<br/>RU / EN · theme · demo roles] --> API[Per-app route handlers<br/>input and role validation]
+  UI[Six Next.js App Router UIs<br/>RU / EN · theme · demo roles] --> API[Per-app route handlers<br/>input and role validation]
   API --> Services[Shared domain modules<br/>growth · ambassadors · challenges · portal · league]
   Services --> Rules[Pure scoring, privacy, funnel and ranking]
-  Services --> Prisma[Five Prisma clients<br/>local libSQL driver]
-  Prisma --> DB[(Five isolated SQLite files)]
+  Services --> Prisma[Six Prisma clients<br/>local libSQL driver]
+  Prisma --> DB[(Six isolated SQLite files)]
   Services --> Contract[AiStartifyClient interface]
   Contract --> Mock[Deterministic mock and simulations]
   Contract -. future .-> HTTP[HTTP stub — not implemented]

@@ -199,6 +199,12 @@ export default function Globe(props: GlobeProps) {
   useEffect(() => {
     if (presenter) setInteracted(false);
   }, [presenter]);
+  // The library may signal readiness before its forwarded ref is assigned.
+  // Initialize the camera after React commits the ready render, including in reduced motion.
+  useEffect(() => {
+    if (!ready || !globe.current) return;
+    globe.current.pointOfView({ lat: 24, lng: 65, altitude: 2.2 }, 0);
+  }, [ready]);
   useEffect(() => {
     if (!ready || !globe.current) return;
     const controls = globe.current.controls();
@@ -469,7 +475,9 @@ export default function Globe(props: GlobeProps) {
       const key = mode === "single" ? single : dominantDirection(rows);
       const metric = rows.find((m) => m.direction === key);
       const score =
-        mode === "single" ? (metric?.capture ?? 0) : overallCapture(rows);
+        mode === "single"
+          ? (metric?.capture ?? 0)
+          : overallCapture(currentMetrics.get(iso) ?? []);
       if (!key || score <= 0 || !visible.includes(key)) return "#142a39";
       return colors(directionMap.get(key)!.color, 0.3 + (0.65 * score) / 100);
     },
@@ -504,6 +512,8 @@ export default function Globe(props: GlobeProps) {
       className={`globe-viewport${presenter ? " globe-presenting" : ""}`}
       ref={container}
       data-testid="globe-viewport"
+      data-marker-count={visibleMetrics.length}
+      data-month={metrics[0]?.monthIndex}
       onPointerDownCapture={() => setInteracted(true)}
     >
       {supported === null && (
@@ -514,6 +524,7 @@ export default function Globe(props: GlobeProps) {
       {supported && (
         <WebGLBoundary onUnavailable={onUnavailable}>
           <GlobeRenderer
+            animateIn={false}
             ref={globe}
             width={size.width}
             height={size.height}
@@ -523,13 +534,7 @@ export default function Globe(props: GlobeProps) {
             atmosphereColor="#398db6"
             atmosphereAltitude={0.16}
             showGraticules
-            onGlobeReady={() => {
-              globe.current?.pointOfView(
-                { lat: 24, lng: 65, altitude: 2.2 },
-                0,
-              );
-              setReady(true);
-            }}
+            onGlobeReady={() => setReady(true)}
             polygonsData={land}
             polygonCapColor={capColor}
             polygonSideColor={() => "#0a1e2d"}

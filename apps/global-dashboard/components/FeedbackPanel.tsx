@@ -16,7 +16,6 @@ export function FeedbackPanel({ model }: { model: DashboardModel }) {
     setBubblePause,
     bubblePause,
     data,
-    sort,
     setBubbles,
     filters,
     setFilters,

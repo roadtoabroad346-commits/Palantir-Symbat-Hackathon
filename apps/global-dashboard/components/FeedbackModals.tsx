@@ -22,7 +22,6 @@ export function FeedbackModals({ model }: { model: DashboardModel }) {
     data,
     single,
     lang,
-    rows,
     busy,
   } = model;
   if (!data) return null;

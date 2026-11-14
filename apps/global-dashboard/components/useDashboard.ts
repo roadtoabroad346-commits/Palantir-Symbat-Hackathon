@@ -7,7 +7,7 @@ import {
   useState,
   type FormEvent,
 } from "react";
-import { piiGuard } from "@startify/shared";
+import { piiGuard, t } from "@startify/shared";
 import { DIRECTIONS } from "../config/directions";
 import { overallCapture as score } from "../lib/logic";
 import { shape, categoryNames } from "./dashboard-copy";
@@ -59,10 +59,7 @@ export function useDashboardController() {
   const recentBubble = useRef<string | null>(null);
   const bubbleCursor = useRef(0);
   const hasShownBubble = useRef(false);
-  const tx = useCallback(
-    (ru: string, en: string) => (lang === "ru" ? ru : en),
-    [lang],
-  );
+  const tx = useCallback((ru: string, en: string) => t(lang, ru, en), [lang]);
   const label = (map: Record<string, [string, string]>, key: string) =>
     map[key]?.[lang === "ru" ? 0 : 1] ?? key;
   const name = useCallback(
@@ -180,7 +177,8 @@ export function useDashboardController() {
         setSelected(null);
       } else if (e.key.toLowerCase() === "p") {
         e.preventDefault();
-        setPresenter((p) => !p);
+        if (presenter) setPlaying(false);
+        setPresenter(!presenter);
       } else if (e.code === "Space") {
         if (el.closest("button")) return;
         e.preventDefault();
@@ -195,7 +193,7 @@ export function useDashboardController() {
     };
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
-  }, [toggleDirection]);
+  }, [toggleDirection, presenter]);
   const rows = useMemo(
     () => data?.metrics.filter((m) => m.monthIndex === month) ?? [],
     [data, month],
@@ -307,6 +305,7 @@ export function useDashboardController() {
       recentBubble.current = result.feedback.id;
       setBubbles([result.feedback.id]);
       setSelected(result.feedback.iso);
+      setTable(false);
       setAdd(false);
       setNotice(
         tx(

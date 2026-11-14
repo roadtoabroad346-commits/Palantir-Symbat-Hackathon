@@ -1739,3 +1739,9 @@ tbody th button:hover {
     scroll-behavior: auto !important;
   }
 }
+.legend-directions button.current-direction {
+  outline: 1px solid var(--muted);
+  outline-offset: 5px;
+  border-radius: 2px;
+  font-weight: 700;
+}
