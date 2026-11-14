@@ -1,0 +1,48 @@
+generator client {
+ provider = "prisma-client-js"
+ engineType = "client"
+ output = "../generated/client"
+}
+datasource db {
+ provider = "sqlite"
+ url = "file:./demo.db"
+}
+model Campaign {
+ id String @id
+ name String
+ country String
+ audience String
+ channel String
+ language String
+ tone String
+ status String @default("draft")
+ budgetUsd Float @default(0)
+ minAge Int @default(18)
+ createdAt DateTime @default(now())
+}
+model MessageVariant {
+ id String @id
+ campaignId String
+ text String
+ label String
+}
+model ReferralLink {
+ id String @id
+ campaignId String
+ code String @unique
+ url String
+ utm String
+}
+model TrackedEvent {
+ id String @id
+ linkCode String
+ type String
+ country String
+ ts DateTime @default(now())
+}
+model ComplianceRule {
+ id String @id
+ key String @unique
+ description String
+ enabled Boolean @default(true)
+}

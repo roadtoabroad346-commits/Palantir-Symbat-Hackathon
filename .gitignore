@@ -1,0 +1,10 @@
+node_modules/
+.next/
+*.tsbuildinfo
+.env
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+generated/
+.smoke-*.log

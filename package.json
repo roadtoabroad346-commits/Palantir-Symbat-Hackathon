@@ -1,0 +1,26 @@
+{
+  "name": "startify-lab",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev:growth": "pnpm --filter growth-engine dev",
+    "dev:ambassador": "pnpm --filter ambassador-platform dev",
+    "dev:challenge": "pnpm --filter challenge-platform dev",
+    "dev:portal": "pnpm --filter school-portal dev",
+    "dev:league": "pnpm --filter school-league dev",
+    "dev:all": "pnpm --parallel --filter \"./apps/*\" dev",
+    "build": "pnpm --filter @startify/shared test && pnpm -r --workspace-concurrency=1 --filter \"./apps/*\" build",
+    "test": "vitest run",
+    "lint": "eslint apps packages && pnpm -r --filter \"./apps/*\" typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "tsx": "^4.21.0",
+    "vitest": "^3.2.4",
+    "eslint": "^9.39.0",
+    "typescript-eslint": "^8.48.0",
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0"
+  }
+}

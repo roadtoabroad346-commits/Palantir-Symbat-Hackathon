@@ -1,0 +1,19 @@
+{
+  "name": "@startify/shared",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./ui": "./src/ui.tsx",
+    "./server": "./src/server.ts",
+    "./styles": "./src/styles.css"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. packages/shared"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "next": "16.4.6",
+    "@prisma/client": "6.19.3"
+  }
+}
