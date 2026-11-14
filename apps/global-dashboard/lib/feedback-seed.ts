@@ -1,0 +1,182 @@
+import { seededRandom, nickname, assertPublic } from "@startify/shared";
+import { COUNTRIES } from "../config/targets";
+import { DIRECTIONS } from "../config/directions";
+import type {
+  Feedback,
+  FeedbackCategory,
+  AuthorType,
+  FeedbackStatus,
+} from "./types";
+const originals: Record<string, string[]> = {
+  KZ: [
+    "Қазақ тіліндегі сабақтар жинағы мектеп клубына көмектесер еді.",
+    "Есепті мектеп әкімшілігіне бір батырмамен шығару ыңғайлы болар еді.",
+    "Жоба мысалдарын ауыл мектебінің өмірінен алайық.",
+    "Әлсіз интернетте суреттерсіз жеңіл бет керек.",
+    "Ата-ана келісімін қарапайым сөздермен түсіндірсек жақсы.",
+    "Күрделі стартап сөздеріне қысқа түсіндірме қосайық.",
+  ],
+  UZ: [
+    "O‘zbek lotin yozuvidagi interfeys va vazifalar kerak.",
+    "Dars to‘plamini chop etib olib kirish qulay bo‘lardi.",
+    "Ota-onalarga portfolio foydasini aniq misolda ko‘rsataylik.",
+    "Mobil sahifadagi tugmalar biroz kattaroq bo‘lsa yaxshi.",
+    "Rozilik matnini o‘qituvchi bilan ko‘rib chiqish kerak.",
+    "Murakkab atamalar o‘rniga sodda misollar beraylik.",
+  ],
+  KG: [
+    "Кыргызча сабактар менен чейрек календарын кошолу.",
+    "Сабактарды басып чыгарып колдонуу абдан жардам берди.",
+    "Мектептеги көйгөйдөн башталган долбоор мисалы керек.",
+    "Телефондо команда кодун табуу жеңилирээк болсо жакшы.",
+    "Ата-эненин макулдугун жөнөкөй түшүндүрөлү.",
+    "Стартап терминдерине кыргызча мисалдар керек.",
+  ],
+  IN: [
+    "हिंदी में पाठ सामग्री मिले तो छोटी कक्षाएँ भी जुड़ पाएँगी।",
+    "कम इंटरनेट में छापे हुए पाठ बहुत काम आते हैं।",
+    "माता-पिता के लिए पोर्टफोलियो का एक साफ उदाहरण चाहिए।",
+    "फोन पर टीम का कोड कॉपी करना आसान बनाइए।",
+    "अभिभावक की सहमति का छोटा और साफ सार जोड़ें।",
+    "कठिन स्टार्टअप शब्दों के साथ छोटे उदाहरण दें।",
+  ],
+  NG: [
+    "A lighter mobile page would help our school club use less data.",
+    "Printable lessons let us keep working when internet drops.",
+    "Please show a founder card with the school badge.",
+    "The progress bars make the next step easy to understand.",
+    "Explain parental consent in a short teacher checklist.",
+    "Could startup terms have simple examples beside them?",
+  ],
+  PH: [
+    "Mas makakatulong ang Tagalog na mensahe para sa mga magulang.",
+    "Magagamit ang naka-print na aralin kapag mahina ang internet.",
+    "Ipakita ang portfolio para sa scholarship sa isang maikling halimbawa.",
+    "Mas madaling pindutin sana ang mga pindutan sa telepono.",
+    "Gawing malinaw ang paliwanag sa pahintulot ng magulang.",
+    "Lagyan ng simpleng paliwanag ang mga startup na salita.",
+  ],
+  KE: [
+    "Masomo yanayoweza kuchapishwa yanasaidia wakati intaneti inakatika.",
+    "Tungependa hali ya nje ya mtandao kwa klabu ya shule.",
+    "Mfano wa mradi wa maji safi ungefaa kwa somo letu.",
+    "Ukurasa mwepesi wa simu ungetumia data kidogo.",
+    "Eleza idhini ya mzazi kwa hatua rahisi kwa walimu.",
+    "Ongeza mifano rahisi kwa maneno magumu ya biashara.",
+  ],
+  TR: [
+    "Veli izin metni yerel kurallara uygun ve anlaşılır olmalı.",
+    "Basılabilir dersler internet kesilince kulübü ayakta tutuyor.",
+    "Türkçe bir öğretmen kılavuzu hazırlayabilir miyiz?",
+    "Telefonda okul kodunu kopyalamak daha kolay olsun.",
+    "Veli onayı için kısa bir kontrol listesi iyi olur.",
+    "Girişim terimlerini günlük örneklerle açıklayalım.",
+  ],
+  VN: [
+    "Các thuật ngữ như TAM cần ví dụ đơn giản hơn.",
+    "Bài học in được giúp lớp học khi mạng yếu.",
+    "Xin thêm mẫu dự án về một vấn đề ở trường.",
+    "Nút sao chép mã lớp trên điện thoại nên lớn hơn.",
+    "Phần đồng ý của phụ huynh cần tóm tắt rõ ràng.",
+    "Bộ bài học tiếng Việt sẽ giúp các bạn nhỏ hơn.",
+  ],
+  ID: [
+    "Kami perlu contoh pesan bahasa Indonesia untuk orang tua.",
+    "Materi cetak membantu klub saat internet tidak stabil.",
+    "Ide konten video pendek akan lebih mudah dibagikan.",
+    "Halaman kartu pendiri sebaiknya lebih ringan di ponsel.",
+    "Jelaskan persetujuan orang tua dengan langkah sederhana.",
+    "Tambahkan contoh sederhana untuk istilah startup.",
+  ],
+};
+const requests: Record<string, [string, string]> = {
+  KZ: ["казахоязычные занятия", "Kazakh lesson kits"],
+  UZ: ["узбекский интерфейс на латинице", "a Latin-script Uzbek interface"],
+  KG: [
+    "кыргызские занятия и календарь четвертей",
+    "Kyrgyz lessons and school-quarter calendars",
+  ],
+  IN: [
+    "занятия на хинди для младших классов",
+    "a Hindi lesson kit for younger grades",
+  ],
+  NG: [
+    "лёгкие мобильные карточки с эмблемой школы",
+    "lighter mobile founder cards with a school badge",
+  ],
+  PH: [
+    "тагальские сообщения родителям о портфолио",
+    "Tagalog parent messages about portfolio value",
+  ],
+  KE: [
+    "печатные занятия и доступ без сети",
+    "printable lessons and offline access",
+  ],
+  TR: [
+    "локальные правила согласия родителей",
+    "local parental-consent wording",
+  ],
+  VN: [
+    "простые объяснения стартап-терминов",
+    "plain explanations of startup terms",
+  ],
+  ID: [
+    "индонезийские шаблоны и короткие видео",
+    "bahasa Indonesia templates and short videos",
+  ],
+};
+export function feedbackSeed(): Feedback[] {
+  const rng = seededRandom(246);
+  const categories: FeedbackCategory[] = [
+    "localization",
+    "offline",
+    "content",
+    "ux",
+    "compliance",
+    "translation",
+  ];
+  return COUNTRIES.flatMap((c, ci) =>
+    originals[c.iso].map((original, j) => {
+      const req = requests[c.iso];
+      const ru = [
+        `Для нашего клуба нужны ${req[0]}. Ученикам будет проще начать.`,
+        `Печатные занятия помогают при слабом интернете. Хотелось бы продолжать работу без сети.`,
+        `Добавьте близкий школьникам пример проекта и покажите пользу портфолио для родителей.`,
+        `На телефоне хочется более лёгкую страницу и удобную кнопку копирования кода.`,
+        `Объясните согласие родителей коротким и понятным списком для учителя.`,
+        `Сложные стартап-термины лучше объяснять простыми примерами.`,
+      ][j];
+      const en = [
+        `Our club needs ${req[1]}. That would make the first step easier.`,
+        `Printable lessons help when internet is unreliable. Offline work would help even more.`,
+        `Add a familiar school project example and show parents the portfolio value.`,
+        `A lighter mobile page and a clearer code-copy button would be useful.`,
+        `Explain parental consent with a short, clear teacher checklist.`,
+        `Difficult startup terms need simple examples beside them.`,
+      ][j];
+      const f: Feedback = {
+        id: `feedback-${c.iso}-${j}`,
+        iso: c.iso,
+        direction: DIRECTIONS[(ci + j) % 5].key,
+        authorType: (["ambassador", "teacher", "student"] as AuthorType[])[
+          j % 3
+        ],
+        nickname: nickname(ci * 6 + j),
+        category: categories[j],
+        lang: c.primaryLang,
+        textOriginal: original,
+        textRu: ru,
+        textEn: en,
+        sentiment:
+          j % 3 === 0 ? "negative" : j % 3 === 1 ? "positive" : "neutral",
+        votes: Math.floor(rng() * 45) + 1,
+        status: (["new", "triaged", "planned", "shipped"] as FeedbackStatus[])[
+          (ci + j) % 4
+        ],
+        createdAt: new Date(Date.UTC(2026, 10, 1 + ci, j)).toISOString(),
+      };
+      assertPublic(f.nickname, f.textOriginal, f.textRu, f.textEn);
+      return f;
+    }),
+  );
+}

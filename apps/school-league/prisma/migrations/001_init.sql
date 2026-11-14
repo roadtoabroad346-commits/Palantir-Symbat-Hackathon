@@ -1,0 +1,41 @@
+CREATE TABLE "School" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "slug" TEXT NOT NULL UNIQUE,
+  "name" TEXT NOT NULL,
+  "country" TEXT NOT NULL,
+  "city" TEXT NOT NULL,
+  "code" TEXT NOT NULL UNIQUE
+);
+CREATE TABLE "Student" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "schoolId" TEXT NOT NULL,
+  "nickname" TEXT NOT NULL,
+  "studentRef" TEXT NOT NULL UNIQUE
+);
+CREATE TABLE "Project" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "studentId" TEXT NOT NULL,
+  "title" TEXT NOT NULL,
+  "idea" TEXT NOT NULL,
+  "status" TEXT NOT NULL,
+  "passportId" TEXT NOT NULL,
+  "publishedAt" DATETIME,
+  "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE "Season" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "title" TEXT NOT NULL,
+  "startAt" DATETIME NOT NULL,
+  "endAt" DATETIME NOT NULL,
+  "active" BOOLEAN NOT NULL,
+  "frozen" BOOLEAN NOT NULL DEFAULT 0
+);
+CREATE TABLE "PointsSnapshot" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "seasonId" TEXT NOT NULL,
+  "schoolId" TEXT NOT NULL,
+  "started" INTEGER NOT NULL,
+  "published" INTEGER NOT NULL,
+  "points" INTEGER NOT NULL,
+  "ts" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

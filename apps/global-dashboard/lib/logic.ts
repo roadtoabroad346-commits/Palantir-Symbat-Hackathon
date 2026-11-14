@@ -1,0 +1,173 @@
+import { DIRECTIONS } from "../config/directions";
+import type {
+  Country,
+  Metric,
+  Feedback,
+  Language,
+  DirectionKey,
+} from "./types";
+export function captureScore(primary: number, target: number) {
+  return Number.isFinite(primary) && Number.isFinite(target) && target > 0
+    ? Math.max(0, Math.min(100, (100 * primary) / target))
+    : 0;
+}
+export function dominantDirection(metrics: Metric[]): DirectionKey | null {
+  let result: DirectionKey | null = null,
+    best = 0;
+  for (const d of DIRECTIONS) {
+    const value = metrics.find((m) => m.direction === d.key)?.capture ?? 0;
+    if (value > best) {
+      best = value;
+      result = d.key;
+    }
+  }
+  return result;
+}
+export function overallCapture(metrics: Metric[]) {
+  const total = DIRECTIONS.reduce((n, d) => n + d.weight, 0);
+  return total
+    ? DIRECTIONS.reduce(
+        (n, d) =>
+          n +
+          (metrics.find((m) => m.direction === d.key)?.capture ?? 0) * d.weight,
+        0,
+      ) / total
+    : 0;
+}
+export function markerFan(country: Country, count = 5) {
+  return Array.from({ length: Math.max(0, Math.min(5, count)) }, (_, i) => {
+    const angle = -Math.PI / 2 + (i * 2 * Math.PI) / count;
+    return {
+      lat: Math.max(-85, Math.min(85, country.lat + 2.6 * Math.sin(angle))),
+      lng:
+        country.lng +
+        (2.6 * Math.cos(angle)) /
+          Math.max(0.3, Math.cos((country.lat * Math.PI) / 180)),
+    };
+  });
+}
+export interface FeedbackFilters {
+  iso?: string;
+  direction?: string;
+  category?: string;
+  authorType?: string;
+  status?: string;
+  sort?: "votes" | "date";
+}
+export function filterFeedback(feedback: Feedback[], filters: FeedbackFilters) {
+  return feedback
+    .filter(
+      (f) =>
+        (!filters.iso || f.iso === filters.iso) &&
+        (!filters.direction || f.direction === filters.direction) &&
+        (!filters.category || f.category === filters.category) &&
+        (!filters.authorType || f.authorType === filters.authorType) &&
+        (!filters.status || f.status === filters.status),
+    )
+    .sort((a, b) =>
+      filters.sort === "date"
+        ? b.createdAt.localeCompare(a.createdAt) || a.id.localeCompare(b.id)
+        : b.votes - a.votes ||
+          b.createdAt.localeCompare(a.createdAt) ||
+          a.id.localeCompare(b.id),
+    );
+}
+const priorities: Record<string, [string, string]> = {
+  KZ: [
+    "казахоязычные занятия и отчёты для школы",
+    "Kazakh lesson kits and school reports",
+  ],
+  UZ: [
+    "узбекский интерфейс на латинице и простые объяснения",
+    "a Latin-script Uzbek interface and simpler terminology",
+  ],
+  KG: [
+    "кыргызские материалы и календарь четвертей",
+    "Kyrgyz materials and school-quarter calendars",
+  ],
+  IN: [
+    "занятия на хинди и материалы для младших классов",
+    "a Hindi lesson kit and materials for younger grades",
+  ],
+  NG: [
+    "лёгкие мобильные страницы и карточки проектов",
+    "lighter mobile pages and founder cards",
+  ],
+  PH: [
+    "тагальские сообщения для родителей и примеры портфолио",
+    "Tagalog parent messages and portfolio examples",
+  ],
+  KE: [
+    "печатные материалы и доступ без стабильной сети",
+    "printable lessons and offline access",
+  ],
+  TR: [
+    "понятные правила согласия родителей",
+    "clear local parental-consent wording",
+  ],
+  VN: [
+    "простой язык вместо сложных стартап-терминов",
+    "plain language instead of difficult startup terms",
+  ],
+  ID: [
+    "индонезийские шаблоны и короткие видео",
+    "bahasa Indonesia templates and short videos",
+  ],
+};
+export function localizationInsights(
+  country: Country,
+  feedback: Feedback[],
+  lang: Language,
+) {
+  const local = feedback.filter((f) => f.iso === country.iso);
+  const counts: Record<string, number> = Object.fromEntries(
+    [
+      "localization",
+      "translation",
+      "content",
+      "ux",
+      "feature",
+      "compliance",
+      "offline",
+    ].map((c) => [c, local.filter((f) => f.category === c).length]),
+  );
+  const themeRules: [string, string, RegExp][] = [
+    [
+      "Язык и локализация",
+      "Language and localization",
+      /language|interface|latin|hindi|kazakh|kyrgyz|tagalog|bahasa|translation/i,
+    ],
+    [
+      "Доступ без сети",
+      "Offline access",
+      /offline|print|internet|data|mobile/i,
+    ],
+    [
+      "Материалы и термины",
+      "Lessons and simple terms",
+      /lesson|kit|term|explain|portfolio|video/i,
+    ],
+    [
+      "Согласие и безопасность",
+      "Consent and safety",
+      /consent|privacy|parental|safe/i,
+    ],
+  ];
+  const themes = themeRules
+    .map(([ru, en, regex]) => ({
+      theme: lang === "ru" ? ru : en,
+      count: local.filter((f) => regex.test(f.textEn)).length,
+    }))
+    .filter((t) => t.count > 0)
+    .sort((a, b) => b.count - a.count || a.theme.localeCompare(b.theme))
+    .slice(0, 3);
+  const p = priorities[country.iso] ?? [
+    "локальные материалы",
+    "local materials",
+  ];
+  const summary =
+    lang === "ru"
+      ? `${country.nameRu}: приоритет — ${p[0]}. ${local.length} вымышленных замечаний помогают выбрать следующий небольшой эксперимент.`
+      : `${country.nameEn}: prioritize ${p[1]}. ${local.length} fictional comments help select the next small experiment.`;
+  return { summary, themes, counts };
+}

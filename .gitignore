@@ -1,0 +1,15 @@
+node_modules/
+.next/
+*.tsbuildinfo
+.env
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+generated/
+.smoke-*.log
+coverage/
+.pnpm-store/
+.pnpm-cache/
+next-env.d.ts
+work/

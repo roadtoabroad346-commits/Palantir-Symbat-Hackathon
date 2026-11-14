@@ -1,0 +1,51 @@
+generator client {
+ provider = "prisma-client-js"
+ engineType = "client"
+ output = "../generated/client"
+}
+datasource db {
+ provider = "sqlite"
+ url = "file:./demo.db"
+}
+model Country {
+ iso String @id
+ nameRu String
+ nameEn String
+ lat Float
+ lng Float
+ wave Int
+ primaryLang String
+}
+model CountryDirectionMonthly {
+ iso String
+ direction String
+ monthIndex Int
+ primaryMetric Int
+ secondaryMetric Int
+ capture Float
+ @@id([iso,direction,monthIndex])
+}
+model GlobalMonthly {
+ monthIndex Int @id
+ users Int
+ publishedProjects Int
+ schools Int
+ ambassadors Int
+ activeCampaigns Int
+}
+model Feedback {
+ id String @id
+ iso String
+ direction String
+ authorType String
+ nickname String
+ category String
+ lang String
+ textOriginal String
+ textRu String
+ textEn String
+ sentiment String
+ votes Int
+ status String
+ createdAt DateTime
+}

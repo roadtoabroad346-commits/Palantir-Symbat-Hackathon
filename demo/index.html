@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Startify · Демоцентр</title>
+    <link rel="stylesheet" href="/demo.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">К содержимому</a>
+    <div id="home">
+      <header class="header">
+        <a href="/" class="brand"
+          ><span>s↗</span><strong>startify<small>DEMO LAB</small></strong></a
+        >
+        <div class="header-tools">
+          <span
+            class="demo-badge"
+            data-ru="Демонстрационные данные"
+            data-en="Demo data"
+            >Демонстрационные данные</span
+          ><button id="language" aria-label="Switch language">EN</button>
+        </div>
+      </header>
+      <main id="main">
+        <div
+          class="eyebrow"
+          data-ru="ШЕСТЬ ПРОДУКТОВ. ОДНА ТОЧКА ВХОДА."
+          data-en="SIX PRODUCTS. ONE PLACE TO START."
+        >
+          ШЕСТЬ ПРОДУКТОВ. ОДНА ТОЧКА ВХОДА.
+        </div>
+        <section class="hero">
+          <div class="hero-copy">
+            <h1
+              data-ru="Идеи готовы.&#10;Попробуйте их в деле."
+              data-en="The ideas are ready.&#10;Try them for yourself."
+            >
+              Идеи готовы.<br />Попробуйте их в деле.
+            </h1>
+            <p
+              data-ru="Откройте любой MVP без регистрации. Демоаккаунты и данные уже подготовлены — можно сразу нажимать, создавать и проверять."
+              data-en="Open any MVP without signing up. Demo accounts and data are ready — start exploring, creating and testing."
+            >
+              Откройте любой MVP без регистрации. Демоаккаунты и данные уже
+              подготовлены — можно сразу нажимать, создавать и проверять.
+            </p>
+            <button
+              id="open-globe"
+              class="primary"
+              data-ru="Открыть 3D-глобус ↗"
+              data-en="Open the 3D globe ↗"
+            >
+              Открыть 3D-глобус ↗</button
+            ><span class="ready-summary" id="ready-summary" role="status"
+              >Подготавливаем приложения…</span
+            >
+          </div>
+          <div class="planet-art" aria-hidden="true">
+            <div class="planet">
+              <i></i><i></i><i></i><b>✦</b><span class="dot dot-a">G</span
+              ><span class="dot dot-b">A</span><span class="dot dot-c">C</span
+              ><span class="dot dot-d">P</span><span class="dot dot-e">L</span>
+            </div>
+            <div class="planet-caption">
+              10 COUNTRIES · 5 DIRECTIONS · 1 WORLD
+            </div>
+          </div>
+        </section>
+        <div class="section-heading">
+          <h2
+            data-ru="Выберите, что проверить"
+            data-en="Choose what to explore"
+          >
+            Выберите, что проверить
+          </h2>
+          <span
+            data-ru="Все изменения сохраняются только в демосреде"
+            data-en="All changes stay in the demo environment"
+            >Все изменения сохраняются только в демосреде</span
+          >
+        </div>
+        <div class="cards" id="cards"></div>
+        <p class="notice" id="notice" role="alert" hidden></p>
+        <footer>
+          <span>AI Startify · Global growth challenge</span
+          ><span
+            data-ru="Реальная платформа не подключена. Данные вымышлены."
+            data-en="No real platform connection. All data is fictional."
+            >Реальная платформа не подключена. Данные вымышлены.</span
+          >
+        </footer>
+      </main>
+    </div>
+    <section id="viewer" hidden aria-label="Демонстрация приложения">
+      <header class="viewer-bar">
+        <button id="back" data-ru="← Все MVP" data-en="← All demos">
+          ← Все MVP</button
+        ><strong id="viewer-title"></strong
+        ><span
+          class="demo-badge"
+          data-ru="Демо без регистрации"
+          data-en="Demo · no sign-up"
+          >Демо без регистрации</span
+        ><a
+          id="external"
+          target="_blank"
+          rel="noopener"
+          data-ru="Открыть отдельно ↗"
+          data-en="Open in new tab ↗"
+          >Открыть отдельно ↗</a
+        >
+      </header>
+      <div class="viewer-hint">
+        <span id="viewer-steps"></span
+        ><button id="hide-hint" aria-label="Закрыть подсказку">×</button>
+      </div>
+      <div
+        id="frame-loading"
+        role="status"
+        data-ru="Открываем приложение…"
+        data-en="Opening the app…"
+      >
+        Открываем приложение…
+      </div>
+      <iframe
+        id="app-frame"
+        title="Демонстрация MVP"
+        allow="clipboard-write; fullscreen"
+      ></iframe>
+    </section>
+    <script type="module" src="/demo.js"></script>
+  </body>
+</html>

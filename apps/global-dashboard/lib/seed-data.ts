@@ -1,0 +1,121 @@
+import { seededRandom } from "@startify/shared";
+import {
+  COUNTRIES,
+  MARKET_WEIGHTS,
+  TARGETS,
+  startMonth,
+} from "../config/targets";
+import { DIRECTIONS } from "../config/directions";
+import { captureScore } from "./logic";
+import { feedbackSeed } from "./feedback-seed";
+import type { DashboardState, GlobalMonthly, Metric } from "./types";
+const curve = (month: number) => {
+  const f = (x: number) => 1 / (1 + Math.exp(-0.6 * (x - 6)));
+  return (f(month) - f(0)) / (f(12) - f(0));
+};
+export function allocate(total: number, weights: number[]) {
+  const sum = weights.reduce((a, b) => a + b, 0);
+  if (!sum) return weights.map(() => 0);
+  const raw = weights.map((w) => (total * w) / sum);
+  const result = raw.map(Math.floor);
+  let remainder = total - result.reduce((a, b) => a + b, 0);
+  const order = raw
+    .map((v, i) => ({ i, f: v - Math.floor(v) }))
+    .sort((a, b) => b.f - a.f || a.i - b.i);
+  for (const { i } of order) {
+    if (remainder-- <= 0) break;
+    result[i]++;
+  }
+  return result;
+}
+export function createSeed(): DashboardState {
+  const rng = seededRandom(84);
+  const market = COUNTRIES.map(
+    (c) => MARKET_WEIGHTS[c.iso] * (0.9 + 0.2 * rng()),
+  );
+  const globals: GlobalMonthly[] = Array.from(
+    { length: 13 },
+    (_, monthIndex) => {
+      const s = curve(monthIndex);
+      return {
+        monthIndex,
+        users: Math.round(4000 + 96000 * s),
+        publishedProjects: Math.round(567 + 9433 * s),
+        schools: Math.round(120 + 2380 * s),
+        ambassadors: Math.round(35 + 1965 * s),
+        activeCampaigns: Math.round(12 + 588 * s),
+      };
+    },
+  );
+  const totals = COUNTRIES.map(() => ({
+    users: 0,
+    projects: 0,
+    schools: 0,
+    ambassadors: 0,
+    campaigns: 0,
+  }));
+  const metrics: Metric[] = [];
+  for (const g of globals) {
+    const prev = globals[g.monthIndex - 1];
+    const weights = COUNTRIES.map((c, i) =>
+      g.monthIndex < startMonth(c)
+        ? 0
+        : market[i] * Math.min(1, 0.2 * (g.monthIndex - startMonth(c) + 1)),
+    );
+    const allocated = {
+      users: allocate(g.users - (prev?.users ?? 0), weights),
+      projects: allocate(
+        g.publishedProjects - (prev?.publishedProjects ?? 0),
+        weights,
+      ),
+      schools: allocate(g.schools - (prev?.schools ?? 0), weights),
+      ambassadors: allocate(g.ambassadors - (prev?.ambassadors ?? 0), weights),
+      campaigns: allocate(
+        g.activeCampaigns - (prev?.activeCampaigns ?? 0),
+        weights,
+      ),
+    };
+    for (let ci = 0; ci < COUNTRIES.length; ci++) {
+      const c = COUNTRIES[ci],
+        last = totals[ci];
+      const total = {
+        users: last.users + allocated.users[ci],
+        projects: last.projects + allocated.projects[ci],
+        schools: last.schools + allocated.schools[ci],
+        ambassadors: last.ambassadors + allocated.ambassadors[ci],
+        campaigns: last.campaigns + allocated.campaigns[ci],
+      };
+      totals[ci] = total;
+      for (const d of DIRECTIONS) {
+        const primary = {
+          growth: total.users,
+          ambassador: Math.round(total.users * 0.21),
+          challenge: Math.round(total.projects * 0.58),
+          portal: Math.round(total.users * 0.44),
+          league: total.projects,
+        }[d.key];
+        const secondary = {
+          growth: total.campaigns,
+          ambassador: total.ambassadors,
+          challenge: Math.round(total.users * 0.06),
+          portal: total.schools,
+          league: total.schools,
+        }[d.key];
+        metrics.push({
+          iso: c.iso,
+          direction: d.key,
+          monthIndex: g.monthIndex,
+          primaryMetric: primary,
+          secondaryMetric: secondary,
+          capture: captureScore(primary, TARGETS[c.iso][d.key]),
+        });
+      }
+    }
+  }
+  return {
+    countries: COUNTRIES.map((c) => ({ ...c })),
+    metrics,
+    globals,
+    feedback: feedbackSeed(),
+  };
+}

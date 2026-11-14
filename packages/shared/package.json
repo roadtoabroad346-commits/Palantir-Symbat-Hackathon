@@ -1,0 +1,24 @@
+{
+  "name": "@startify/shared",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./ui": "./src/ui.tsx",
+    "./server": "./src/server.ts",
+    "./styles": "./src/styles.css",
+    "./v2/http": "./src/v2/http.ts",
+    "./v2/ui": "./src/v2/ui.tsx",
+    "./v2/service": "./src/v2/service.ts",
+    "./v2/store": "./src/v2/store.ts",
+    "./v2/types": "./src/v2/types.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. packages/shared"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "next": "16.4.6",
+    "@prisma/client": "6.19.3"
+  }
+}

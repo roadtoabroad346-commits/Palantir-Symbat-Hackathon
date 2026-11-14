@@ -1,0 +1,62 @@
+generator client {
+ provider = "prisma-client-js"
+ engineType = "client"
+ output = "../generated/client"
+}
+datasource db {
+ provider = "sqlite"
+ url = "file:./demo.db"
+}
+model School {
+ id String @id
+ name String
+ country String
+ city String
+ type String
+ status String
+ consentConfirmed Boolean
+ createdAt DateTime @default(now())
+}
+model Teacher {
+ id String @id
+ schoolId String
+ displayName String
+ role String
+}
+model ClassGroup {
+ id String @id
+ schoolId String
+ name String
+ gradeRange String
+ code String @unique
+ active Boolean
+}
+model StudentEntry {
+ id String @id
+ classId String
+ nickname String
+ studentRef String @unique
+ stage Int
+ status String
+}
+model LessonKit {
+ id String @id
+ order Int
+ title String
+ objectives String
+ steps String
+ stageRange String
+}
+model Report {
+ id String @id
+ schoolId String
+ period String
+ generatedAt DateTime @default(now())
+ dataJson String
+}
+model PartnerNote {
+ id String @id
+ schoolId String
+ note String
+ ts DateTime @default(now())
+}

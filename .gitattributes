@@ -1,0 +1,3 @@
+
+# Windows batch entry point must remain safe for cmd.exe.
+START_DEMO.cmd text eol=crlf

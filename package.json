@@ -1,0 +1,44 @@
+{
+  "name": "startify-lab",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev:growth": "pnpm --filter growth-engine dev",
+    "dev:ambassador": "pnpm --filter ambassador-platform dev",
+    "dev:challenge": "pnpm --filter challenge-platform dev",
+    "dev:portal": "pnpm --filter school-portal dev",
+    "dev:league": "pnpm --filter school-league dev",
+    "dev:all": "pnpm --parallel --filter \"./apps/*\" dev",
+    "build": "pnpm --filter @startify/shared test && pnpm -r --workspace-concurrency=1 --filter \"./apps/*\" build",
+    "test": "vitest run",
+    "lint": "eslint apps packages && pnpm -r --filter \"./apps/*\" typecheck",
+    "db:prepare": "pnpm -r --workspace-concurrency=1 --filter \"./apps/*\" prepare:db",
+    "smoke": "pnpm -r --workspace-concurrency=1 --filter \"./apps/*\" smoke",
+    "smoke:browser": "node scripts/browser-smoke.mjs",
+    "test:coverage": "vitest run --coverage",
+    "dev:globe": "pnpm --filter global-dashboard dev",
+    "smoke:globe-browser": "node scripts/globe-browser-smoke.mjs",
+    "demo": "node scripts/demo.mjs",
+    "start:demo": "node scripts/demo.mjs",
+    "dev:studio": "pnpm --filter founder-studio dev",
+    "smoke:v2": "node scripts/v2-smoke.mjs",
+    "smoke:v2-browser": "node scripts/v2-browser-smoke.mjs",
+    "demo:v2-seed": "tsx scripts/demo-v2-seed.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitest/coverage-v8": "3.2.7",
+    "eslint": "^9.39.0",
+    "prettier": "3.8.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.0",
+    "vitest": "^3.2.4",
+    "@startify/shared": "workspace:*"
+  },
+  "engines": {
+    "node": ">=24 <25"
+  }
+}

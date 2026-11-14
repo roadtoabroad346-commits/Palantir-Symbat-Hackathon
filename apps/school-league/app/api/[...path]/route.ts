@@ -1,0 +1,79 @@
+import { NextRequest, NextResponse } from "next/server";
+import { service } from "../../../lib";
+export const dynamic = "force-dynamic";
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> },
+) {
+  const { path } = await params;
+  try {
+    if (path[0] === "export")
+      return new Response(
+        await service.exportCsv(
+          req.nextUrl.searchParams.get("report") ?? undefined,
+        ),
+        {
+          headers: {
+            "Content-Type": "text/csv; charset=utf-8",
+            "Content-Disposition": "attachment; filename=demo-report.csv",
+          },
+        },
+      );
+    if (path[0] === "simulate")
+      return NextResponse.json(
+        await service.mutate(
+          "simulate",
+          { n: Number(req.nextUrl.searchParams.get("n") ?? 20) },
+          req.cookies.get("demo-role-school-league")?.value,
+        ),
+      );
+    return NextResponse.json(
+      await service.view(
+        req.nextUrl.searchParams.get("page") ?? "/",
+        req.cookies.get("demo-role-school-league")?.value,
+        req.nextUrl.searchParams.get("selection") ?? undefined,
+      ),
+    );
+  } catch (e) {
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Request failed" },
+      { status: 400 },
+    );
+  }
+}
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> },
+) {
+  if (
+    req.headers.get("origin") &&
+    new URL(req.headers.get("origin")!).host !== req.headers.get("host")
+  )
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  const { path } = await params;
+  try {
+    const data = await req.json();
+    if (path[0] === "session") {
+      if (!service.roles.includes(data.role)) throw new Error("Invalid role");
+      const res = NextResponse.json({ ok: true });
+      res.cookies.set("demo-role-school-league", data.role, {
+        httpOnly: true,
+        sameSite: "strict",
+        path: "/",
+      });
+      return res;
+    }
+    return NextResponse.json(
+      await service.mutate(
+        path[0] === "events" ? "event" : (data.op ?? path[0]),
+        data,
+        req.cookies.get("demo-role-school-league")?.value,
+      ),
+    );
+  } catch (e) {
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Request failed" },
+      { status: 400 },
+    );
+  }
+}

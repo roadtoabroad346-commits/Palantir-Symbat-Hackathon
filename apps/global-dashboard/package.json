@@ -1,0 +1,34 @@
+{
+  "name": "global-dashboard",
+  "private": true,
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:seed": "tsx seed.ts",
+    "prepare:db": "prisma generate && node ../../scripts/migrate.mjs && tsx seed.ts && tsx ../../scripts/seed-v2.ts global-dashboard",
+    "dev": "pnpm prepare:db && next dev --hostname 0.0.0.0 --port 3006",
+    "build": "pnpm prepare:db && next build --webpack",
+    "start": "next start --hostname 0.0.0.0 --port 3006",
+    "typecheck": "tsc --noEmit",
+    "smoke": "node ../../scripts/globe-smoke.mjs"
+  },
+  "dependencies": {
+    "@startify/shared": "workspace:*",
+    "next": "16.4.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "@prisma/client": "6.19.3",
+    "@prisma/adapter-libsql": "6.19.3",
+    "react-globe.gl": "^2.38.0",
+    "three": "^0.183.0",
+    "world-atlas": "^2.0.2",
+    "topojson-client": "^3.1.0"
+  },
+  "devDependencies": {
+    "prisma": "6.19.3",
+    "tailwindcss": "^4.1.0",
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/three": "^0.183.0",
+    "@types/topojson-client": "^3.1.5",
+    "@types/geojson": "^7946.0.16"
+  }
+}
