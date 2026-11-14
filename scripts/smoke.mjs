@@ -10,7 +10,7 @@ const paths={
  'school-portal':['/register','/dashboard','/classes/class-0','/lesson-kit','/reports','/partner'],
  'school-league':['/','/schools/school-0','/join','/card','/admin']};
 const roles={'growth-engine':'growth-manager','ambassador-platform':'admin','challenge-platform':'admin','school-portal':'teacher','school-league':'teacher'};
-const server=spawn('pnpm',['--filter',name,'start'],{stdio:['ignore','pipe','pipe'],detached:true});let logs='';server.stdout.on('data',b=>logs+=b);server.stderr.on('data',b=>logs+=b);
+const server=spawn('pnpm',['--filter',name,'start'],{stdio:['ignore','pipe','pipe'],detached:true,env:{...process.env,DEMO_PRODUCTION:'1'}});let logs='';server.stdout.on('data',b=>logs+=b);server.stderr.on('data',b=>logs+=b);
 const origin=`http://127.0.0.1:${port}`;
 try{
  let ready=false;for(let i=0;i<120;i++){if(server.exitCode!==null)throw new Error(logs);try{const r=await fetch(origin);if(r.ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,500));}assert(ready,'Startup timeout: '+logs);

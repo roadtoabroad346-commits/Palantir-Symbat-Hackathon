@@ -328,7 +328,9 @@ export function exportPack(
       .filter(
         (e) =>
           e.type === "evidence.updated" &&
-          e.payload.verificationStatus !== "verified",
+          (e.payload.verificationStatus !== "verified" ||
+            !e.payload.consent ||
+            e.payload.sensitive),
       )
       .map((e) => e.entityRef),
   );

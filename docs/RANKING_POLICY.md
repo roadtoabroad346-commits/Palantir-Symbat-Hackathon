@@ -10,7 +10,7 @@ This is an initial organizer-controlled pilot policy, not a scientifically valid
 | Change / learning | 20% | absent | unsupported change | reason linked to observation | documented before/after and retest | evidence-led iteration including unexpected or negative results |
 | Next action | 10% | absent | vague intent | concrete manageable action | owner, due date and resources | feasible agreed action with confirmation and follow-up |
 
-`score = sum(weight_i * rating_i / 4)`, ratings are integers 0–4, result 0–100. No intermediate rounding. Latest evaluation per reviewer is retained for calculation; all original evaluation rows remain. Multiple reviewers use the arithmetic mean of their unrounded scores. Evidence must be independently verified. Credits, money and likes are absent from the formula.
+`score = sum(weight_i * rating_i / 4)`, ratings are integers 0–4, result 0–100. No intermediate rounding. Latest evaluation per reviewer is retained for calculation; all original evaluation rows remain. Multiple reviewers use the arithmetic mean of their unrounded scores. Evidence must be independently verified. Credits, money and likes are absent from the formula. Official primary-institution credit requires a canonical portal cohort enrollment matching the project owner and institution. A self-declared affiliation remains metadata; it does not block individual participation or become institutional credit.
 
 Competition ranks: 1,1,3 for tied scores. ID sorting orders display only and never changes tied rank. Empty evidence means insufficient data, not a failing zero.
 

@@ -32,6 +32,7 @@ try {
   );
   child = spawn("pnpm", ["--filter", "global-dashboard", "start"], {
     cwd: root,
+    env: { ...process.env, DEMO_PRODUCTION: "1" },
     detached: true,
     stdio: ["ignore", "pipe", "pipe"],
   });

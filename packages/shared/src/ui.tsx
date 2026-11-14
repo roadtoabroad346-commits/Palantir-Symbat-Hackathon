@@ -150,6 +150,13 @@ export function Dashboard({ initial }: { initial: View }) {
           / {tr("Пять способов расти|Five ways to grow")}
         </div>
         <nav aria-label={t(lang, "Основная навигация", "Main navigation")}>
+          <a href="/v2">
+            {t(
+              lang,
+              "Growth Hub V2 — новые сценарии",
+              "Growth Hub V2 — new workflows",
+            )}
+          </a>
           {v.nav.map((n, i) => (
             <a
               key={n.href}

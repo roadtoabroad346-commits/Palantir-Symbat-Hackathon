@@ -19,7 +19,11 @@
     "dev:globe": "pnpm --filter global-dashboard dev",
     "smoke:globe-browser": "node scripts/globe-browser-smoke.mjs",
     "demo": "node scripts/demo.mjs",
-    "start:demo": "node scripts/demo.mjs"
+    "start:demo": "node scripts/demo.mjs",
+    "dev:studio": "pnpm --filter founder-studio dev",
+    "smoke:v2": "node scripts/v2-smoke.mjs",
+    "smoke:v2-browser": "node scripts/v2-browser-smoke.mjs",
+    "demo:v2-seed": "tsx scripts/demo-v2-seed.ts"
   },
   "devDependencies": {
     "@types/node": "^24.10.0",
@@ -31,7 +35,8 @@
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.48.0",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "@startify/shared": "workspace:*"
   },
   "engines": {
     "node": ">=24 <25"

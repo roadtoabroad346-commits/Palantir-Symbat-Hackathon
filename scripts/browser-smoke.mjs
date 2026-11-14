@@ -41,7 +41,7 @@ async function startApp(name, port) {
   let occupied = false;
   try {await fetch(origin, {signal: AbortSignal.timeout(500)}); occupied = true;} catch {}
   assert(!occupied, `Port ${port} already has a server; stop it before this smoke test.`);
-  const owned = launch('pnpm', ['--filter', name, 'start']);
+  const owned = launch('pnpm', ['--filter', name, 'start'], {env:{...process.env,DEMO_PRODUCTION:'1'}});
   await waitFor(async () => {
     if (owned.child.exitCode !== null) throw new Error(owned.logs);
     return (await fetch(origin, {signal: AbortSignal.timeout(1500)})).ok;

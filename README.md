@@ -105,3 +105,13 @@ Students use opaque IDs and invented nicknames only. Public text is checked for 
 Replace `HttpAiStartifyClient` methods in `packages/shared/src/index.ts` using the actual upstream API contract, then inject that implementation in `makeService`. Authenticate and verify incoming events before granting progress or points. Add real identity, school ownership, consent auditing, abuse controls and secret bindings before external deployment. The demo role menu and public event ingestion are intentionally local demonstration mechanisms.
 
 ECC workflows from [affaan-m/ecc](https://github.com/affaan-m/ecc) were applied after the user's request: test-first regressions, independent reviewers, domain modularization, coverage and verification. No ECC hooks or global configuration were installed.
+
+## Growth Hub V3 extension
+
+The contributor's six MVPs are preserved. A seventh **Founder studio** on 3007 and a `/v2` workspace in every app add persistent solo learning/prototypes/SIGNAL, Marketing Lab, institutional agreements/cohorts, expert support with transactional service credits, evidence-based V2 seasons, and Evidence Room exports. Start with `pnpm demo`; select Founder studio or follow the V2 link in an original app.
+
+New commands: `pnpm dev:studio`, `pnpm smoke:v2`, `pnpm smoke:v2-browser`. Internal event delivery retries every five seconds while the demo hub runs; Sync retries a module manually.
+
+This is a **local demonstration release**, not connected production authentication, AI Startify, payments, automatic publishing, signing or video generation. Normal production builds fail closed for demo authentication; `DEMO_PRODUCTION=1` is explicitly a local demo of production bundles. A successful storyboard export is an actual JSON editing package, not MP4.
+
+See [V2 architecture](docs/ARCHITECTURE_V2.md), [runbook](docs/RUNBOOK.md), [demo story](docs/DEMO.md), [acceptance](docs/ACCEPTANCE.md), [status](docs/STATUS.md) and [V2 verification](docs/VERIFICATION_V2.md). Existing reports above describe the original contributor release; the V2 report records this implementation's own checks.

@@ -69,7 +69,9 @@ async function startApp(name, port) {
     !occupied,
     `Port ${port} already has a server; stop it before this smoke test.`,
   );
-  const owned = launch("pnpm", ["--filter", name, "start"]);
+  const owned = launch("pnpm", ["--filter", name, "start"], {
+    env: { ...process.env, DEMO_PRODUCTION: "1" },
+  });
   await waitFor(async () => {
     if (owned.child.exitCode !== null) throw new Error(owned.logs);
     return (await fetch(origin, { signal: AbortSignal.timeout(1500) })).ok;
@@ -128,10 +130,22 @@ class Cdp {
   send(method, params = {}) {
     const id = ++this.sequence;
     return new Promise((resolvePacket, reject) => {
-      const timer = setTimeout(() => {
-        this.pending.delete(id);
-        reject(new Error(`CDP command timed out: ${method}`));
-      }, 15_000);
+      const timer = setTimeout(
+        () => {
+          this.pending.delete(id);
+          reject(
+            new Error(
+              `CDP command timed out: ${method} ${String(params.expression ?? "").slice(0, 200)}`,
+            ),
+          );
+        },
+        [
+          "Page.captureScreenshot",
+          "Emulation.setDeviceMetricsOverride",
+        ].includes(method)
+          ? 45_000
+          : 15_000,
+      );
       this.pending.set(id, { resolve: resolvePacket, reject, timer });
       this.socket.send(JSON.stringify({ id, method, params }));
     });
@@ -258,14 +272,24 @@ try {
   const initialScreenshot = await page.send("Page.captureScreenshot", {
     format: "png",
     captureBeyondViewport: false,
+    fromSurface: false,
+    optimizeForSpeed: true,
   });
   await writeFile(
     "/tmp/global-dashboard-overview.png",
     Buffer.from(initialScreenshot.data, "base64"),
   );
+  await waitFor(
+    () =>
+      page.evaluate(
+        "document.querySelectorAll('.globe-direction-marker').length===15 && ['circle','triangle','square','diamond','hexagon'].every(shape=>document.querySelector('.globe-shape-'+shape))",
+      ),
+    "stable complete marker set after screenshot",
+  );
   const shapes = await page.evaluate(
     "[...document.querySelectorAll('.globe-direction-marker')].map(e=>e.className).join(' ')",
   );
+  console.log("Globe initial marker classes:", shapes);
   for (const shape of ["circle", "triangle", "square", "diamond", "hexagon"])
     assert(shapes.includes("globe-shape-" + shape), `Marker shape ${shape}`);
   assert.equal(
@@ -300,9 +324,7 @@ try {
       page.evaluate("!!document.querySelector('button[data-country=\"IN\"]')"),
     "India marker ready after layer update",
   );
-  await page.evaluate(
-    "document.querySelector('button[data-country=\"IN\"]').click()",
-  );
+  await waitFor(() => page.evaluate("(()=>{const marker=document.querySelector('button[data-country=\"IN\"]');if(!marker)return false;marker.click();return true;})()"),"India marker click during asynchronous globe layer updates");
   await waitFor(
     () =>
       page.evaluate(
@@ -476,6 +498,8 @@ try {
   const screenshot = await page.send("Page.captureScreenshot", {
     format: "png",
     captureBeyondViewport: false,
+    fromSurface: false,
+    optimizeForSpeed: true,
   });
   await writeFile(
     "/tmp/global-dashboard.png",

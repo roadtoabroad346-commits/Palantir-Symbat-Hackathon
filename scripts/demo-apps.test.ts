@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { DEMO_APPS, identifyApp, appUrl } from "./demo-apps.mjs";
 describe("demo entry contracts", () => {
-  it("has six distinct products and gives globe the landing priority", () => {
-    expect(DEMO_APPS).toHaveLength(6);
-    expect(new Set(DEMO_APPS.map((a) => a.port)).size).toBe(6);
+  it("retains the six products and adds the founder studio and gives globe the landing priority", () => {
+    expect(DEMO_APPS).toHaveLength(7);
+    expect(new Set(DEMO_APPS.map((a) => a.port)).size).toBe(7);
     expect(DEMO_APPS[0].key).toBe("globe");
   });
   it("requires domain identity rather than an open port", () => {
@@ -19,6 +19,16 @@ describe("demo entry contracts", () => {
       }),
     ).toBe(true);
     expect(identifyApp(globe, { ok: true })).toBe(false);
+    expect(
+      identifyApp(globe, {
+        schemaVersion: 2,
+        app: "global-dashboard",
+        dataMode: "demo",
+        countries: Array(11),
+        globals: Array(13),
+        metrics: Array(715),
+      }),
+    ).toBe(true);
   });
   it("uses the viewers hostname and the app port", () => {
     expect(appUrl("https://example.test:3000", 3006)).toBe(

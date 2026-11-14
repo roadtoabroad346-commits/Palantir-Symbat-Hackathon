@@ -4,7 +4,7 @@
   "scripts": {
     "db:generate": "prisma generate",
     "db:seed": "tsx seed.ts",
-    "prepare:db": "prisma generate && node ../../scripts/migrate.mjs && tsx seed.ts",
+    "prepare:db": "prisma generate && node ../../scripts/migrate.mjs && tsx seed.ts && tsx ../../scripts/seed-v2.ts school-portal",
     "dev": "pnpm prepare:db && next dev --hostname 0.0.0.0 --port 3004",
     "build": "pnpm prepare:db && next build --webpack",
     "start": "next start --hostname 0.0.0.0 --port 3004",

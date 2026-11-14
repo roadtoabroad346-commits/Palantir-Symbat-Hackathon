@@ -1,4 +1,5 @@
 import { createServer } from "node:http";
+import { relayOnce } from "./v2-relay.mjs";
 import { connect } from "node:net";
 import { spawn } from "node:child_process";
 import {
@@ -21,7 +22,7 @@ if (
   DEMO_APPS.some((a) => a.port === port)
 )
   throw new Error(
-    "DEMO_PORT must be a free port1024–65535, excluding3001–3006",
+    "DEMO_PORT must be a free port1024–65535, excluding3001–3007",
   );
 const childEnv = { ...process.env, NEXT_TELEMETRY_DISABLED: "1" };
 // The managed workspace has a read-only home. Local machines keep their own cache defaults.
@@ -42,6 +43,17 @@ const records = new Map(
 const owned = new Map();
 const starting = new Map();
 let closing = false;
+let relaying = false;
+const relayTimer = setInterval(async () => {
+  if (closing || relaying) return;
+  relaying = true;
+  try {
+    await relayOnce();
+  } finally {
+    relaying = false;
+  }
+}, 5000);
+relayTimer.unref();
 let statusPromise;
 function json(res, status, body, headers = {}) {
   res.writeHead(status, {
@@ -54,7 +66,7 @@ function json(res, status, body, headers = {}) {
 async function probe(app) {
   try {
     const response = await fetch(
-      `http://127.0.0.1:${app.port}${app.key === "globe" ? "/api/data" : "/api/state"}`,
+      `http://127.0.0.1:${app.port}${app.v2 ? "/api/v2/health" : app.key === "globe" ? "/api/data" : "/api/state"}`,
       { signal: AbortSignal.timeout(2500) },
     );
     return response.ok && identifyApp(app, await response.json());
@@ -184,14 +196,21 @@ const server = createServer(async (req, res) => {
         return;
       }
       const upstream = `http://127.0.0.1:${app.port}`;
-      const session = await fetch(upstream + "/api/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Origin: upstream },
-        body: JSON.stringify(
-          app.key === "globe" ? { admin: true } : { role: app.role },
-        ),
-        signal: AbortSignal.timeout(10000),
-      });
+      const session = await fetch(
+        upstream + (app.v2 ? "/api/v2/session" : "/api/session"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Origin: upstream },
+          body: JSON.stringify(
+            app.v2
+              ? { subjectId: app.subjectId }
+              : app.key === "globe"
+                ? { admin: true }
+                : { role: app.role },
+          ),
+          signal: AbortSignal.timeout(10000),
+        },
+      );
       if (!session.ok)
         throw new Error(
           "Не удалось включить демороль / Demo role could not be set",
@@ -230,6 +249,7 @@ const server = createServer(async (req, res) => {
 async function cleanup() {
   if (closing) return;
   closing = true;
+  clearInterval(relayTimer);
   for (const child of owned.values()) {
     if (child.exitCode !== null) continue;
     try {
@@ -250,7 +270,7 @@ server.once("error", (error) => {
 });
 server.listen(port, "0.0.0.0", () => {
   console.log(
-    `\nAI Startify demo hub: http://localhost:${port}\nOne page for six demos. Logs: ${logs}\nCtrl-C stops only services started by this launcher.\n`,
+    `\nAI Startify demo hub: http://localhost:${port}\nOne page for seven applications. Logs: ${logs}\nCtrl-C stops only services started by this launcher.\n`,
   );
   // On a local computer, open the single entry page automatically.
   // Cloud sessions without a desktop display keep the URL available in the terminal.

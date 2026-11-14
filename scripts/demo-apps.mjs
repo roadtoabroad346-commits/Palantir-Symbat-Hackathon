@@ -107,9 +107,40 @@ export const DEMO_APPS = [
     ],
     icon: "⚑",
   },
+  {
+    key: "founder",
+    name: "founder-studio",
+    port: 3007,
+    route: "/v2",
+    role: null,
+    v2: true,
+    subjectId: "demo-ed29282c1588b038c3df9463",
+    color: "#b8df9b",
+    title: ["Студия фаундера", "Founder studio"],
+    summary: [
+      "Индивидуальный проект, обучение, прототип, SIGNAL и помощь.",
+      "Individual project, learning, prototype, SIGNAL and support.",
+    ],
+    steps: [
+      "Выберите NovaSolo → создайте проект → сохраните миссию → проверьте прототип.",
+      "Choose NovaSolo → create a project → save a mission → check a prototype.",
+    ],
+    icon: "△",
+  },
 ];
 export function identifyApp(app, data) {
   if (!data || typeof data !== "object") return false;
+  if (app.key === "globe" && data.schemaVersion === 2)
+    return (
+      data.app === app.name &&
+      data.dataMode === "demo" &&
+      Array.isArray(data.countries) &&
+      data.countries.length > 0 &&
+      Array.isArray(data.globals) &&
+      data.globals.length > 0 &&
+      Array.isArray(data.metrics) &&
+      data.metrics.length === data.countries.length * data.globals.length * 5
+    );
   return app.key === "globe"
     ? Array.isArray(data.countries) &&
         data.countries.length === 10 &&

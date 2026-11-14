@@ -76,8 +76,8 @@ function renderCards() {
   }
   const n = apps.filter((a) => a.status === "ready").length;
   $("ready-summary").textContent = tr(
-    `Готово ${n} из 6 приложений`,
-    `Ready: ${n} of 6 apps`,
+    `Готово ${n} из ${apps.length} приложений`,
+    `Ready: ${n} of ${apps.length} apps`,
   );
   const globe = apps.find((a) => a.key === "globe");
   $("open-globe").disabled = opening || globe?.status !== "ready";

@@ -164,10 +164,14 @@ function publicRows(store: Store, snapshot: RecordV2) {
   return snapshot.data.rows.filter(
     (r: Data) =>
       permittedProject(store, r.projectId, snapshot.mode) &&
-      r.evidenceRefs.every(
-        (id: string) =>
-          store.get(id, "evidence").data.verificationStatus === "verified",
-      ),
+      r.evidenceRefs.every((id: string) => {
+        const e = store.get(id, "evidence");
+        return (
+          e.data.verificationStatus === "verified" &&
+          e.data.consent === true &&
+          !e.data.sensitive
+        );
+      }),
   );
 }
 function emitMetric(store: Store, actor: Actor, m: RecordV2) {
@@ -194,6 +198,7 @@ function emitMetric(store: Store, actor: Actor, m: RecordV2) {
       supersededBy: p.supersededBy ?? null,
       consent:
         p.consent &&
+        evidence.data.consent &&
         !evidence.data.sensitive &&
         evidence.data.verificationStatus === "verified",
       visibility: m.visibility,
@@ -367,7 +372,10 @@ export function rankingMutate(
         projectId,
         institutionId: p.payload.institutionId ?? null,
         title: publicText(d, "title"),
-        description: text(d, "description", 8000),
+        description:
+          bool(d, "consent") && !bool(d, "sensitive")
+            ? publicText(d, "description", 8000)
+            : text(d, "description", 8000),
         sourceType: choice(d, "sourceType", [
           "first_party_event",
           "authenticated_upstream",
@@ -456,6 +464,45 @@ export function rankingMutate(
       }
     return updated;
   }
+  if (op === "evidence.visibility") {
+    const e = store.get(text(d, "evidenceId", 160), "evidence");
+    own(actor, e);
+    const consent = bool(d, "consent");
+    if (consent && !e.data.sensitive) publicText(e.data, "description", 8000);
+    const updated = store.update(
+      e,
+      { ...e.data, consent },
+      consent && !e.data.sensitive && e.data.verificationStatus === "verified"
+        ? "public"
+        : "private",
+    );
+    store.emit(
+      "evidence.updated",
+      actor,
+      updated,
+      {
+        projectId: e.data.projectId,
+        verificationStatus: e.data.verificationStatus,
+        consent,
+        sensitive: e.data.sensitive,
+        sourceType: e.data.sourceType,
+      },
+      ["global-dashboard", "founder-studio"],
+      e.data.verificationStatus,
+    );
+    if (!consent)
+      for (const m of store
+        .list("metric", actor.mode)
+        .filter((m) => m.data.evidenceId === e.id)) {
+        const restricted = store.update(
+          m,
+          { ...m.data, sourceConsentBlocked: true },
+          "private",
+        );
+        emitMetric(store, actor, restricted);
+      }
+    return updated;
+  }
   if (op === "metric.submit") {
     const projectId = text(d, "projectId", 160),
       p = projectAccess(store, actor, projectId),
@@ -465,6 +512,12 @@ export function rankingMutate(
       "invalid_reference",
       "Evidence project mismatch",
     );
+    if (d.visibility === "public")
+      insist(
+        e.data.consent === true && !e.data.sensitive && bool(d, "consent"),
+        "consent_required",
+        "Public metric requires publication permission for its evidence",
+      );
     return store.create(
       "metric",
       actor,
@@ -619,7 +672,17 @@ export function rankingMutate(
       "ineligible",
       "Stage/country does not match season",
     );
-    const primaryInstitutionId = p.payload.institutionId ?? null;
+    const enrollment = store
+      .projections("school-portal")
+      .find(
+        (e) =>
+          e.type === "cohort.updated" &&
+          e.dataMode === actor.mode &&
+          e.entityRef === p.payload.cohortId &&
+          e.payload.institutionId === p.payload.institutionId &&
+          e.payload.participantIds?.includes(p.payload.ownerFounderId),
+      );
+    const primaryInstitutionId = enrollment ? p.payload.institutionId : null;
     if (["individual", "team"].includes(season.data.category))
       insist(
         (p.payload.entrantType ?? "individual") === season.data.category,
