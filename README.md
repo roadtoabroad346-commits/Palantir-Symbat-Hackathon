@@ -2,6 +2,18 @@
 
 Six independent bilingual MVPs for the AI Startify Global Growth Challenge. All screens visibly identify **demo data**. No application is connected to AI Startify, a real advertising system, a messaging service or a student database. No API keys are required.
 
+## Самый простой запуск / Quick demo
+
+```sh
+pnpm demo
+```
+
+Open `http://localhost:3000` in the browser on the machine running the project. The demo hub starts missing applications, shows readiness, sets demo roles and opens all six products in one window. The large **Open the 3D globe** button opens Global Impact; **All demos** returns to the product list. No sign-up or manual database setup is needed.
+
+In the managed Cloud environment use Chrome inside **Desktop** with `http://127.0.0.1:3000`. This is one landing page, not a published Internet address; the app frames use ports 3001–3006. On your own computer, `pnpm demo` also opens the default browser when supported.
+
+For a fresh checkout: install Node 24 and pnpm 11.25.0, then run `pnpm install --frozen-lockfile` once before `pnpm demo`. The launcher uses development mode by default so edits appear immediately; `DEMO_PRODUCTION=1 pnpm demo` uses existing production builds. Stop the launcher with Ctrl-C to stop the services it started; previously running applications are retained.
+
 ## Install and run
 
 Requires Node **24** and **pnpm 11.25.0** (`corepack enable` on machines where Corepack is installed).

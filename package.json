@@ -17,7 +17,9 @@
     "smoke:browser": "node scripts/browser-smoke.mjs",
     "test:coverage": "vitest run --coverage",
     "dev:globe": "pnpm --filter global-dashboard dev",
-    "smoke:globe-browser": "node scripts/globe-browser-smoke.mjs"
+    "smoke:globe-browser": "node scripts/globe-browser-smoke.mjs",
+    "demo": "node scripts/demo.mjs",
+    "start:demo": "node scripts/demo.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.10.0",
