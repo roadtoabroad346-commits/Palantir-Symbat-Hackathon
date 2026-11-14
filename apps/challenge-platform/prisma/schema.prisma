@@ -1,0 +1,62 @@
+generator client {
+ provider = "prisma-client-js"
+ engineType = "client"
+ output = "../generated/client"
+}
+datasource db {
+ provider = "sqlite"
+ url = "file:./demo.db"
+}
+model Challenge {
+ id String @id
+ title String
+ theme String
+ startAt DateTime
+ endAt DateTime
+ status String
+ rubricJson String
+ weightsJson String
+ frozenJson String?
+}
+model Team {
+ id String @id
+ challengeId String
+ name String
+ schoolCode String
+ country String
+ createdAt DateTime @default(now())
+}
+model TeamMember {
+ id String @id
+ teamId String
+ studentRef String
+ nickname String
+ country String
+}
+model ProgressSnapshot {
+ id String @id
+ teamId String
+ started Int
+ published Int
+ avgStage Float
+ ts DateTime @default(now())
+}
+model JudgeScore {
+ id String @id
+ teamId String
+ judgeId String
+ criteriaJson String
+ total Float
+}
+model Badge {
+ id String @id
+ key String @unique
+ title String
+ description String
+}
+model TeamBadge {
+ id String @id
+ teamId String
+ badgeId String
+ ts DateTime @default(now())
+}
