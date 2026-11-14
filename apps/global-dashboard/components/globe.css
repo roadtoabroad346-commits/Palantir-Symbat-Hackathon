@@ -1,0 +1,300 @@
+.globe-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 450px;
+  isolation: isolate;
+  overflow: hidden;
+}
+.globe-viewport > div {
+  max-width: 100%;
+}
+.globe-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #9fc4d7;
+  font-size: 13px;
+}
+.globe-annotation {
+  position: absolute;
+  left: 22px;
+  bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  color: #9bbacb;
+  font-size: 10px;
+  letter-spacing: 0.6px;
+}
+.globe-annotation span {
+  color: #73b2ce;
+  font-size: 7px;
+}
+.globe-html-anchor {
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.globe-marker-position {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  pointer-events: none;
+}
+.globe-direction-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--marker-size, 28px);
+  height: var(--marker-size, 28px);
+  margin: calc(var(--marker-size, 28px) / -2);
+  background: var(--marker-color);
+  color: #06141b;
+  border: 2px solid #091d2e;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 7px #0008;
+  pointer-events: auto;
+  transition: filter 0.15s;
+}
+.globe-direction-marker:hover {
+  filter: brightness(1.25);
+  z-index: 5;
+  position: relative;
+}
+.globe-direction-marker:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 5px;
+  filter: brightness(1.3);
+}
+.globe-shape-circle {
+  border-radius: 50%;
+}
+.globe-shape-square {
+  border-radius: 3px;
+}
+.globe-shape-triangle {
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  padding-top: 7px;
+  width: calc(var(--marker-size) + 4px);
+  height: calc(var(--marker-size) + 3px);
+}
+.globe-shape-diamond {
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  width: calc(var(--marker-size) + 5px);
+  height: calc(var(--marker-size) + 5px);
+}
+.globe-shape-hexagon {
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
+.globe-selected {
+  box-shadow:
+    0 0 0 3px #fff9,
+    0 0 20px var(--marker-color);
+}
+.globe-remark {
+  position: absolute;
+  width: 265px;
+  max-width: calc(100vw - 50px);
+  left: 28px;
+  bottom: 43px;
+  color: #e9f4fa;
+  background: #102a3bf5;
+  border: 1px solid #49606d;
+  border-left: 3px solid var(--remark-color);
+  border-radius: 10px;
+  padding: 12px 13px;
+  box-shadow: 0 12px 30px #0004;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  animation: globe-remark-in 0.35s ease-out;
+  pointer-events: auto;
+}
+.globe-remark::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  bottom: -7px;
+  width: 12px;
+  height: 12px;
+  border-right: 1px solid #49606d;
+  border-bottom: 1px solid #49606d;
+  background: #102a3b;
+  transform: rotate(45deg);
+}
+.globe-remark-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+  font-size: 9px;
+  color: #bed5e2;
+}
+.globe-remark-close {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 4px;
+  color: #e9f4fa;
+  background: #ffffff10;
+  cursor: pointer;
+  font-size: 18px;
+}
+.globe-remark-chip {
+  display: inline-block;
+  font-size: 9px;
+  color: var(--remark-color);
+  font-weight: 650;
+  margin-bottom: 8px;
+}
+.globe-remark-text {
+  display: block;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: #f1f7fb;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.55;
+  cursor: pointer;
+}
+.globe-remark-text:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.globe-remark-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 8px;
+  color: #a9c2d1;
+}
+.globe-remark-footer button {
+  border: 0;
+  background: transparent;
+  color: #cce5f2;
+  font-family: inherit;
+  font-size: 9px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: 3px;
+}
+.globe-remark button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+.globe-country-tooltip {
+  padding: 10px 12px;
+  border: 1px solid #49606d;
+  border-radius: 7px;
+  background: #102a3bf5;
+  color: #e9f4fa;
+  text-align: left;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 10px;
+  line-height: 1.8;
+  box-shadow: 0 8px 24px #0005;
+}
+.globe-country-tooltip strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+.globe-remark-static {
+  animation: none;
+}
+@keyframes globe-remark-in {
+  from {
+    opacity: 0;
+    translate: 0 5px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@media (max-width: 700px) {
+  .globe-viewport {
+    min-height: 400px;
+  }
+  .globe-annotation {
+    left: 14px;
+    font-size: 8px;
+    max-width: 230px;
+    line-height: 1.6;
+  }
+  .globe-remark {
+    width: 230px;
+    left: -45px;
+    bottom: 43px;
+    padding: 10px;
+  }
+  .globe-remark-text {
+    font-size: 11px;
+  }
+  .globe-remark-header {
+    font-size: 8px;
+  }
+  .globe-remark-footer {
+    font-size: 7px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .globe-remark,
+  .globe-direction-marker {
+    animation: none;
+    transition: none;
+  }
+}
+.globe-marker-position:focus-within::after {
+  content: "";
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  left: -21px;
+  top: -21px;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  pointer-events: none;
+}
+.globe-remark:not(.globe-remark-static) {
+  animation: globe-remark-life 6s ease both;
+}
+.globe-remark:hover,
+.globe-remark:focus-within {
+  animation-play-state: paused;
+}
+@keyframes globe-remark-life {
+  0% {
+    opacity: 0;
+    translate: 0 5px;
+  }
+  6%,
+  91% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .globe-remark:not(.globe-remark-static) {
+    animation: none;
+  }
+}

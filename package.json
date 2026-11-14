@@ -15,7 +15,8 @@
     "db:prepare": "pnpm -r --workspace-concurrency=1 --filter \"./apps/*\" prepare:db",
     "smoke": "pnpm -r --workspace-concurrency=1 --filter \"./apps/*\" smoke",
     "smoke:browser": "node scripts/browser-smoke.mjs",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "dev:globe": "pnpm --filter global-dashboard dev"
   },
   "devDependencies": {
     "@types/node": "^24.10.0",

@@ -10,9 +10,10 @@ import {
 } from './index';
 
 describe('deterministic fixture and language contracts', () => {
-  it('keeps both translations and language defaults for all nine countries', () => {
-    expect(countries).toHaveLength(9);
-    expect(new Set(countries.map(c => c.code)).size).toBe(9);
+  it('keeps both translations and language defaults for all ten countries including Kenya', () => {
+    expect(countries).toHaveLength(10);
+    expect(new Set(countries.map(c => c.code)).size).toBe(10);
+    expect(countries.find(c=>c.code==='KE')).toMatchObject({ru:'Кения',en:'Kenya'});
     for (const c of countries) {
       expect(c.ru.length).toBeGreaterThan(0);
       expect(c.en.length).toBeGreaterThan(0);
