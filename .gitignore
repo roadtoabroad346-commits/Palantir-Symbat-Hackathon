@@ -12,3 +12,4 @@ coverage/
 .pnpm-store/
 .pnpm-cache/
 next-env.d.ts
+work/
