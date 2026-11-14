@@ -8,3 +8,7 @@ node_modules/
 *.db-shm
 generated/
 .smoke-*.log
+coverage/
+.pnpm-store/
+.pnpm-cache/
+next-env.d.ts

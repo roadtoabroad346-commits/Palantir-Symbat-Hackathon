@@ -11,16 +11,25 @@
     "dev:all": "pnpm --parallel --filter \"./apps/*\" dev",
     "build": "pnpm --filter @startify/shared test && pnpm -r --workspace-concurrency=1 --filter \"./apps/*\" build",
     "test": "vitest run",
-    "lint": "eslint apps packages && pnpm -r --filter \"./apps/*\" typecheck"
+    "lint": "eslint apps packages && pnpm -r --filter \"./apps/*\" typecheck",
+    "db:prepare": "pnpm -r --workspace-concurrency=1 --filter \"./apps/*\" prepare:db",
+    "smoke": "pnpm -r --workspace-concurrency=1 --filter \"./apps/*\" smoke",
+    "smoke:browser": "node scripts/browser-smoke.mjs",
+    "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "tsx": "^4.21.0",
-    "vitest": "^3.2.4",
-    "eslint": "^9.39.0",
-    "typescript-eslint": "^8.48.0",
     "@types/node": "^24.10.0",
     "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0"
+    "@types/react-dom": "^19.2.0",
+    "@vitest/coverage-v8": "3.2.7",
+    "eslint": "^9.39.0",
+    "prettier": "3.8.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.0",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=24 <25"
   }
 }

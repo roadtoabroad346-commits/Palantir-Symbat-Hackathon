@@ -9,3 +9,6 @@
 - Demo referral URLs resolve locally through /r/[code]; real links, sending, certificates and upstream platform are simulated.
 - Prisma uses engineType=client and the official libSQL adapter for local SQLite. prisma.config.ts selects the JS schema engine. This avoids binary engine downloads blocked by the cloud allowlist; TLS and checksum verification remain enabled. Node 24 is the development baseline.
 - Local SQL migrations are checked in per app and applied transactionally by Node's SQLite module. Prisma's JS schema engine stays configured for client generation; normal app runtime uses the official Prisma/libSQL adapter. Do not run db push against the migration-managed files.
+
+- ECC test suites use serialized file execution because some core/regression tests intentionally exercise app demo databases. The five broader workflow suites use their own temporary databases. Do not launch duplicate mutating suites concurrently.
+- Coverage gates apply to pure business logic and server modules; generated code and UI rendering are excluded explicitly. HTTP/browser checks cover selected actual user flows without adding a heavy E2E framework.
